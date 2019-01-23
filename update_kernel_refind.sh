@@ -17,7 +17,7 @@ last_files=($(find /boot -maxdepth 1 -type f -mtime -1))
 for((i=$num;i<=${#last_files[@]};++i)) do
    if [[ ${last_files[$i]} == *"vmlinuz"* ]]; then
   	echo copying the file ${last_files[$i]} to /boot/efi/EFI/void/
-	new_kernel=$(echo 'vmlinuz-4.19.16_1'| cut -d'-' -f 2)
+	new_kernel=$(echo ${last_files[$i]} | cut -d'-' -f 2)
 	cp ${last_files[$i]} $efi_path  
    fi
 
