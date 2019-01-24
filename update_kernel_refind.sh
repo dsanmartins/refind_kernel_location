@@ -11,21 +11,17 @@ new_kernel=''
 rm -rf /boot/efi/EFI/void/*
 
 #Get last files of /boot directory
-last_files=($(find /boot -maxdepth 1 -type f -mtime -1))
+get_last_vmlinuz=$(ls -t /boot/vmlinuz* | head -1)
+get_last_initramfs=$(ls -t /boot/initramfs* | head -1)
 
-#For each file, check the name, version and move to the efi/EFI/void folder
-for((i=$num;i<=${#last_files[@]};++i)) do
-   if [[ ${last_files[$i]} == *"vmlinuz"* ]]; then
-  	echo copying the file ${last_files[$i]} to /boot/efi/EFI/void/
-	new_kernel=$(echo ${last_files[$i]} | cut -d'-' -f 2)
-	cp ${last_files[$i]} $efi_path  
-   fi
 
-   if [[ ${last_files[$i]} == *"initramfs"* ]]; then
-  	echo copying the file ${last_files[$i]} to /boot/efi/EFI/void/
-	cp ${last_files[$i]} $efi_path 
-   fi
-done
+
+echo copying the file $get_last_vmlinuz  to /boot/efi/EFI/void/
+new_kernel=$(echo $get_last_vmlinuz | cut -d'-' -f 2)
+cp $get_last_vmlinuz $efi_path  
+
+echo copying the file $get_last_initramfs to /boot/efi/EFI/void/
+cp $get_last_initramfs $efi_path 
 
 #replace kernel version (all ocurrencies) in refind.conf file.
 echo The old kernel with version: $old_kernel
